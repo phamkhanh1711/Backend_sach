@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage</title>
+        <style>
+            /* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Set a background image for the whole page */
+body {
+    background: url('your-background-image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Helvetica Neue', sans-serif;
+    text-align: center;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style the header containing the title and logout button */
+h1 {
+    font-size: 36px;
+    margin: 20px;
+    color: #333;
+}
+
+#renderButton {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#renderButton:hover {
+    background: #0056b3;
+}
+
+/* Style the container for adding a book */
+.addBook {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.addBook h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.addBook label {
+    font-weight: bold;
+    margin: 10px 0;
+    display: block;
+    color: #333;
+    float: left;
+}
+
+.addBook input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.addBook button[type="submit"] {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.addBook button[type="submit"]:hover {
+    background: #0056b3;
+}
+
+/* Additional styling for the form fields */
+.addBook select,
+.addBook textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Style for the file upload section */
+.uploadFile {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.uploadFile h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin: 10px 0;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    float: left;
+}
+
+.fileElem {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submitButton {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.submitButton:hover {
+    background: #0056b3;
+}
+
+        </style>
+</head>
+<body>
+    <h1>CREATE BOOK</h1>
+  
+    <button id="renderButton">LOG OUT</button>
+
+    <div class="addBook">
+        <form action="/add_book" method="POST" enctype="multipart/form-data">
+            <label for="bookTitle">Title:</label>
+            <input type="text" id="bookTitle" name="bookTitle">
+            <br>
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author">
+            <br>
+            <label for="publicationYear">Publication Year:</label>
+            <input type="date" id="publicationYear" name="publicationYear">
+            
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" max="1000">
+            <br>
+            <!-- Add a select element for displaying existing categories -->
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="default">Chọn thể loại</option>
+                <% const uniqueCategories = new Set(); %>
+                <% for (let i = 0; i < dataCategory.length; i++) { %>
+                    <% const category = dataCategory[i].category_name; %>
+                    <% if (!uniqueCategories.has(category)) { %>
+                        <% uniqueCategories.add(category); %>
+                        <option value="<%= dataCategory[i].category_id %>"><%= category %></option>
+                    <% } %>
+                <% } %>
+            </select>
+            <br>
+            <!-- Add an input element for adding a new category -->
+            <label for="newCategory">New Category:</label>
+            <input type="text" id="newCategory" name="newCategory">
+            <br>
+            <br>
+
+            <h3>Upload File and Image</h3>
+            
+            <div class="form-group">
+                <label for="fileElem">Select File:</label>
+                <input type="file" class="fileElem" name="fileElem" id="fileElem">
+            </div>
+    
+            <div class="form-group">
+                <label for="myImage">Select Image:</label>
+                <input type="file" class="fileElem" name="myImage" id="myImage">
+            </div>
+    
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+    
+    
+    <div class="uploadFile" hidden>
+        <h3>Upload File and Image</h3>
+        <form class="fileUpload" action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="fileElem">Select File:</label>
+                <input type="file" class="fileElem" name="fileElem" id="fileElem">
+            </div>
+    
+            <div class="form-group">
+                <label for="myImage">Select Image:</label>
+                <input type="file" class="fileElem" name="myImage" id="myImage">
+            </div>
+    
+            <button type="submit" class="submitButton">Upload</button>
+        </form>
+    </div>
+    <script>
+        // Lắng nghe sự kiện click trên nút
+        document.getElementById("renderButton").addEventListener("click", function() {
+            // Thay đổi URL của trình duyệt để render trang khác
+            window.location.href = "/logout";
+        });
+   
+       
+    </script>
+
+</body>
+</html>

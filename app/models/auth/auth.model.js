@@ -1,11 +1,11 @@
-const sql = require('../db')
+const sql = require('../db');
 
 function User(user) {
     this.username = user.username;
     this.email = user.email;
     this.password = user.password;
     this.role_id = user.role_id;
-  }
+}
 
 User.getAll_Account = (result) => {
     const query = `
@@ -24,38 +24,32 @@ User.getAll_Account = (result) => {
     });
 };
 
-User.createUser = (newUser,result)=>{
-    
-    sql.query('INSERT INTO account SET ?',newUser, (err, res) => {
-         
-            if (err) {
-                console.log("error :", err)
-            result(err, null)
+User.createUser = (newUser, result) => {
+    sql.query('INSERT INTO account SET ?', newUser, (err, res) => {
+        if (err) {
+            console.log("error :", err)
+            result(err, null);
             return;
-
-            }
-            console.log("create user : ", { account_id: res.insertId, ...newUser })
-            result(null, { account_id: res.insertId, ...newUser });
-            
-        })
-}
-
-
-User.findByEmail = (email, role_id, result) => {
-    sql.query('SELECT * FROM account WHERE email = ? AND role_id = ?', [email, role_id], (err, res) => {
-      if (err) {
-        result(err, null);
-        return;
-      }
-      if (res.length) {
-        result(null, res[0]);
-        return;
-      }
-      result(null, null);
+        }
+        console.log("create user : ", { account_id: res.insertId, ...newUser });
+        result(null, { account_id: res.insertId, ...newUser });
     });
 }
-  
-  
+
+
+
+User.findByEmail = (email,result)=>{
+    sql.query('SELECT * FROM account WHERE email = ?', [email,result], (err, res) => {
+        if (err) {
+            result(err, null);
+            return;
+        }
+        if (res.length) {
+            result(null, res[0]);
+            return;
+        }
+        result(null, null);
+    });
+}
+
 module.exports = User;
-
-

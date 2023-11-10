@@ -1,5 +1,6 @@
 const cors = require('cors');
 const express = require('express');
+const path = require('path')
 
 
 const app = express();
@@ -17,7 +18,8 @@ passport.deserializeUser(function(obj, cb) {
     cb(null, obj);
 });
 
-app.use(express.static('public'));
+app.use('/public/upload', express.static(path.join(__dirname, 'public', 'upload')));
+
 app.use(express.json());
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(methodOverride(function(req, res) {

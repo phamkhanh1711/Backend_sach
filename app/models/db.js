@@ -7,18 +7,17 @@ const db = mysql.createConnection({
     // password: dbconfig.PASSWORD,
     // database: dbconfig.DB
 
-    host :'localhost',
-    user:'root',
-    password:'',
-    database:'vt_book',
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'vt_book',
 });
 
 db.connect(error => {
     if (error) {
         console.log(error);
-    } else 
+    } else
         console.log('connect databse successfull...');
 })
 
 module.exports = db;
-
