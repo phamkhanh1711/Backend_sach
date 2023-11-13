@@ -20,9 +20,9 @@ exports.detailBooK = (req, res, err) => {
     })
 }
 
-exports.showDataCategory = (req, res) => {
-    Book.getCategory((data) => {
-        res.json({ dataCategory: data })
+exports.showDataNewBook = (req, res) => {
+    Book.getAllBook((data) => {
+        res.json({ book: data })
     })
 }
 

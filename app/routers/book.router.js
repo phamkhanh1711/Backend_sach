@@ -13,7 +13,7 @@ module.exports = app => {
         res.render('home.ejs')
     })
 
-    router.get('/form_add_book', controller.ShowBook)
+    router.get('/form_add_book', controller.showDataNewBook)
         .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
 
     router.get('/book', controller.ShowBook)
