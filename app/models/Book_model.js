@@ -27,20 +27,27 @@ Book.getBook = (result) => {
     //lấy tất cả sách trong db ra 
 Book.getAllBook = (result) => {
         const db = `
-    SELECT  
-    book.book_id,
-    book.book_title
-    ,book.price,
-     book_img_file.image_path,
-     book_img_file.file_image_id,
-     book_category.category_name,
-     book_category.category_id
-    FROM book 
-    LEFT JOIN book_img_file  
-    ON book.book_id = book_img_file.book_id
-    LEFT JOIN book_category
-    ON book.category_id = book_category.category_id
-    GROUP BY book.book_id,book.book_title,book.price, book_img_file.image_path,book_category.category_name,book_category.category_id
+        SELECT  
+        book.book_id,
+        book.book_title
+        ,book.price,
+         book_img_file.image_path,
+         book_img_file.file_image_id,
+         book_category.category_name,
+         book_category.category_id,
+         s.supplier_name,
+         s.supplier_id
+        FROM book 
+        LEFT JOIN book_img_file  
+        ON book.book_id = book_img_file.book_id
+        LEFT JOIN book_category
+        ON book.category_id = book_category.category_id
+        LEFT JOIN book_supplier s ON s.supplier_id = book.supplier_id
+        GROUP BY 
+        book.book_id,book.book_title,book.price, 
+        book_img_file.image_path,
+        book_category.category_name,book_category.category_id,
+        s.supplier_name,s.supplier_id
     `
         sql.query(db, (err, book) => {
             if (err) {
