@@ -5,28 +5,28 @@ const Book = (book) => {
     this.author = book.author
     this.publication_year = book.publication_year
     this.price = book.price
-    this.supplier_id = - book.supplier_id
+    this.supplier_id = -book.supplier_id
     this.category_id = book.category_id
 }
 Book.getBook = (result) => {
-    const db = `
+        const db = `
     SELECT  book.book_id,book.book_title,book.price, book_img_file.image_path
     from book 
     LEFT JOIN book_img_file  
     ON book.book_id = book_img_file.book_id
     GROUP BY book.book_id,book.book_title,book.price, book_img_file.image_path
     `
-    sql.query(db, (err, book) => {
-        if (err) {
-            result(err, null)
-        } else {
-            result(book)
-        }
-    })
-}
-//lấy tất cả sách trong db ra 
+        sql.query(db, (err, book) => {
+            if (err) {
+                result(err, null)
+            } else {
+                result(book)
+            }
+        })
+    }
+    //lấy tất cả sách trong db ra 
 Book.getAllBook = (result) => {
-    const db = `
+        const db = `
     SELECT  
     book.book_id,
     book.book_title
@@ -42,15 +42,15 @@ Book.getAllBook = (result) => {
     ON book.category_id = book_category.category_id
     GROUP BY book.book_id,book.book_title,book.price, book_img_file.image_path,book_category.category_name,book_category.category_id
     `
-    sql.query(db, (err, book) => {
-        if (err) {
-            result(err, null)
-        } else {
-            result(book)
-        }
-    })
-}
-//Lấy chi tiết từng sách 
+        sql.query(db, (err, book) => {
+            if (err) {
+                result(err, null)
+            } else {
+                result(book)
+            }
+        })
+    }
+    //Lấy chi tiết từng sách 
 Book.findByID = (id, result) => {
     const db = `
     SELECT * from book
@@ -91,7 +91,8 @@ Book.addBook = (newData, result) => {
             result(err, book)
         } else {
             result(null, {
-                id: book.insertId, ...newData
+                id: book.insertId,
+                ...newData
             })
         }
     })
@@ -124,7 +125,7 @@ Book.Remove = (id, result) => {
 
 //thêm ảnh và file 
 Book.upload = (newData, result) => {
-    const db = 'INSERT INTO booK_img_file (book_id, file_path, image_path) VALUES(?,?,?)';
+    const db = 'INSERT INTO booK_img_file SET ?';
     sql.query(db, newData, (err, book) => {
         if (err) {
             console.error("Error inserting data:", err);
@@ -133,6 +134,17 @@ Book.upload = (newData, result) => {
         }
         console.log("Data inserted successfully:", book);
         result(null, book);
+    })
+}
+
+Book.get_image_fileDB = (id, callback) => {
+    const db = `SELECT * FROM book_img_file WHERE book_id =${id}`
+    sql.query(db, (err, data) => {
+        if (err) {
+            callback(err, null)
+        } else {
+            callback(data)
+        }
     })
 }
 Book.getCategory = (result) => {
@@ -187,7 +199,7 @@ Book.getByCategoryID = (id, result) => {
         if (err) {
             result(err, null)
         } else {
-  
+
             result(book)
 
         }
@@ -206,7 +218,7 @@ Book.addCategory = (newData, result) => {
             });
         }
     });
-    
+
 };
 Book.searchByName = (searchTerm, result) => {
     const db = `
@@ -238,7 +250,3 @@ Book.searchByName = (searchTerm, result) => {
     });
 };
 module.exports = Book;
-
-
-
-
