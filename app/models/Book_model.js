@@ -136,6 +136,7 @@ Book.upload = (newData, result) => {
         result(null, book);
     })
 }
+
 Book.get_image_fileDB = (id, callback) => {
     const db = `SELECT * FROM book_img_file WHERE book_id =${id}`
     sql.query(db, (err, data) => {
@@ -146,7 +147,6 @@ Book.get_image_fileDB = (id, callback) => {
         }
     })
 }
-
 Book.getCategory = (result) => {
     const db = `
     SELECT *
