@@ -1,0 +1,5 @@
+nhân viên ( macNV, HoNV, TenNV, Phai, Ngaysinh, Luong , diachi, nguoiQL)
+phòng ban ( Maphong, tenPB)
+Đè án	( MaDA, tenDA, DiaDiem)
+địa điểm PHA(maPHA, diadiem)
+thanh tra ( MaNV, Ten, Phai, ngaysinh, quanhe )

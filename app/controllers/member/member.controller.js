@@ -42,6 +42,7 @@ exports.addNewInfor = (req, res) => {
 
 exports.detailUser = (req, res) => {
     const token = (req.get("Authorization")).split(" ")[1].trim();
+    console.log(req);
     const id = jwtDecode.jwtDecode(token, { header: false }).account_id;
     console.log(id);
     Member.getUserById(id, (err, data) => {
@@ -57,7 +58,7 @@ exports.detailUser = (req, res) => {
 };
 
 exports.delete_infor_User = (req, res) => {
-    const token = req.headers.cookie
+    const token = (req.get("Authorization")).split(" ")[1].trim();
     const user_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
 
     Member.deleteUser(user_id, (err) => {

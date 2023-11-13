@@ -40,6 +40,7 @@ exports.All_supplier = (req, res) => {
 
 //Thêm sách mới
 exports.createNewBook = (req, res) => {
+    console.log(req.files);
     const newData = {
         book_title: req.body.bookTitle,
         author: req.body.author,
@@ -54,9 +55,11 @@ exports.createNewBook = (req, res) => {
     function uploadFiles(Book_id) {
         // Upload file
         if (req.fileValidationError) {
-            return res.status(400).send(req.fileValidationError);
+            //return res.status(400).send(req.fileValidationError);
+            console.log(req.fileValidationError);
         } else if (!req.files || !req.files['fileElem'] || !req.files['myImage']) {
-            return res.status(400).send('Please select both files to upload');
+            //return res.status(400).send('Please select both files to upload');
+            console.log('Please select both files to upload');
         }
 
         const file_path = req.files['fileElem'][0].filename;

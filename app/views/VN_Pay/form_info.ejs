@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thanh Toán VNPAY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        form {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <form action="/create_payment_url" method="post">
+        <label for="orderDescription">Mô tả đơn hàng:</label>
+        <input type="text" name="orderDescription" id="orderDescription" placeholder="Nhập mô tả đơn hàng" required>
+
+        <label for="orderType">Loại đơn hàng:</label>
+        <select name="orderType" id="orderType">
+            <option value="topup">Nạp tiền điện thoại</option>
+            <option value="billpayment">Thanh toán hóa đơn</option>
+            <option value="fashion">Thời trang</option>
+        </select>
+
+        <label for="language">Ngôn ngữ:</label>
+        <select name="language" id="language">
+            <option value="vn">Tiếng Việt</option>
+            <option value="en">English</option>
+        </select>
+
+        <label for="amount">Số tiền:</label>
+        <input type="number" name="amount" id="amount" placeholder="Số tiền" required>
+
+        <button type="submit">Thanh toán</button>
+    </form>
+</body>
+</html>

@@ -125,7 +125,7 @@ Book.Remove = (id, result) => {
 
 //thêm ảnh và file 
 Book.upload = (newData, result) => {
-    const db = 'INSERT INTO booK_img_file (book_id, file_path, image_path) VALUES(?,?,?)';
+    const db = 'INSERT INTO booK_img_file SET ?';
     sql.query(db, newData, (err, book) => {
         if (err) {
             console.error("Error inserting data:", err);
