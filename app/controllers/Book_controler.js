@@ -38,6 +38,7 @@ exports.All_supplier = (req, res) => {
     });
 };
 
+
 //Thêm sách mới
 exports.createNewBook = (req, res) => {
     console.log(req.files);
@@ -112,7 +113,6 @@ exports.createNewBook = (req, res) => {
     //     });
     // }
 };
-
 //xóa sách 
 exports.removeBook = (req, res) => {
     var id = req.params.id;
