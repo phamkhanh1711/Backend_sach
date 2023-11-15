@@ -53,6 +53,7 @@ exports.detailUser = (req, res) => {
             res.status(404).json({ error: 'User not found' });
         } else {
             res.status(200).json({ detail: data });
+            console.log(data);
         }
     });
 };

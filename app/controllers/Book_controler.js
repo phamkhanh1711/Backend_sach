@@ -20,9 +20,9 @@ exports.detailBooK = (req, res, err) => {
     })
 }
 
-exports.showDataCategory = (req, res) => {
-    Book.getCategory((data) => {
-        res.json({ dataCategory: data })
+exports.showDataNewBook = (req, res) => {
+    Book.getAllBook((data) => {
+        res.json({ book: data })
     })
 }
 
@@ -37,6 +37,7 @@ exports.All_supplier = (req, res) => {
         res.json({ suppliers: data }); // Sửa key từ "category" thành "suppliers"
     });
 };
+
 
 //Thêm sách mới
 exports.createNewBook = (req, res) => {
@@ -112,12 +113,17 @@ exports.createNewBook = (req, res) => {
     //     });
     // }
 };
-
 //xóa sách 
 exports.removeBook = (req, res) => {
     var id = req.params.id;
     Book.Remove(id, (err) => {
-        res.status(200).json({ message: 'Book deleted successfully' });
+        if (err) {
+            res.json("Error : " + err)
+        } else {
+            res.status(200).json({
+                message: 'Book deleted successfully'
+            });
+        }
     })
 }
 
