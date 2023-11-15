@@ -15,7 +15,7 @@ passport.deserializeUser(function(obj, cb) {
     cb(null, obj);
 });
 
-app.use(express.static('public'));
+
 app.use(express.json());
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(methodOverride(function(req, res) {

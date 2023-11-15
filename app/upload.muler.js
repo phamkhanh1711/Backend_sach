@@ -8,8 +8,11 @@ const storages = multer.diskStorage({
         cb(null, appRoot + "/public/upload");
     },
     filename: function(req, file, cb) {
+        const originalname = path.parse(file.originalname).name; // Extract the original filename without extension
         const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '_' + Date.now() + ext);
+        const timestamp = Date.now();
+        const newFilename = `${originalname}_${timestamp}${ext}`;
+        cb(null, newFilename);
     }
 });
 let upload = multer({ storage: storages });

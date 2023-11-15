@@ -164,3 +164,30 @@ exports.searchProduct = (req, res) => {
         res.status(200).json({ products: data });
     });
 };
+
+
+// hàm cắt file pdf
+exports.Cut_File_PDF = (req, res) => {
+    var book_id = req.params.id
+    models.get_image_fileDB(book_id, (data) => {
+        try {
+            // Construct the absolute paths for the input and output PDF files
+            const inputPath = `/public/upload/${data.map(item => item.file_path)}`
+                // tạo file output.pdf
+            const outputPath = `public/upload/output_${data.map(item => item.file_path)}`;
+            // Use node-pdftk to process the PDF
+            pdftk.input(inputPath)
+                .cat('1-5') // Keep only page 1
+                .output(outputPath);
+            res.json({
+                "File only 5 page :": outputPath,
+                "File original : ": inputPath
+            });
+        } catch (error) {
+            // If an error occurs, send an error response to the client
+            res.status(500).json({ error: "PDF cutting failed", details: error.message });
+            console.error("Error:", error);
+        }
+    })
+
+}
