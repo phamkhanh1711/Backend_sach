@@ -107,15 +107,25 @@ Book.addBook = (newData, result) => {
 
 //xóa sách 
 Book.Remove = (id, result) => {
-    sql.query(`DELETE FROM book WHERE book_id= ${id}`, (err) => {
+    const deleteImgQuery = `DELETE FROM book_img_file WHERE book_id = ${id}`;
+    const deleteBookQuery = `DELETE FROM book WHERE book_id = ${id}`;
+
+    sql.query(deleteImgQuery, (err) => {
         if (err) {
-            result(err, null)
+            result(err, null);
             return;
-        } else {
-            result("xóa dữ liệu sách có id: " + id + " Thành công!")
         }
-    })
-}
+
+        sql.query(deleteBookQuery, (err) => {
+            if (err) {
+                result(err, null);
+                return;
+            }
+
+            result("xóa dữ liệu sách có id: " + id + " Thành công!");
+        });
+    });
+};
 
 // //Sửa thông tin sách 
 // Book.update = (data, result) => {

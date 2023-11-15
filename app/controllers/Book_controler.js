@@ -117,7 +117,13 @@ exports.createNewBook = (req, res) => {
 exports.removeBook = (req, res) => {
     var id = req.params.id;
     Book.Remove(id, (err) => {
-        res.status(200).json({ message: 'Book deleted successfully' });
+        if (err) {
+            res.json("Error : " + err)
+        } else {
+            res.status(200).json({
+                message: 'Book deleted successfully'
+            });
+        }
     })
 }
 
