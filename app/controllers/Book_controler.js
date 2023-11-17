@@ -1,7 +1,7 @@
 const Book = require('../models/Book_model')
 const multer = require('multer');
-
-// hiển thị sách ra web
+const pdftk = require('node-pdftk')
+    // hiển thị sách ra web
 exports.ShowBook = (req, res) => {
     Book.getBook((data) => {
         res.status(200).json({ listBooK: data });
@@ -169,7 +169,7 @@ exports.searchProduct = (req, res) => {
 // hàm cắt file pdf
 exports.Cut_File_PDF = (req, res) => {
     var book_id = req.params.id
-    models.get_image_fileDB(book_id, (data) => {
+    Book.get_image_fileDB(book_id, (data) => {
         try {
             // Construct the absolute paths for the input and output PDF files
             const inputPath = `/public/upload/${data.map(item => item.file_path)}`
@@ -179,6 +179,12 @@ exports.Cut_File_PDF = (req, res) => {
             pdftk.input(inputPath)
                 .cat('1-5') // Keep only page 1
                 .output(outputPath);
+            const newFile = {
+                book_id,
+                file_path: `output_${data.map(item => item.file_path)}`,
+                image_path: `${data.map(item => item.image_path)}`
+            }
+            Book.upload(newFile, () => {})
             res.json({
                 "File only 5 page :": outputPath,
                 "File original : ": inputPath
