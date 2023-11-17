@@ -3,9 +3,7 @@ module.exports = app => {
     const controller = require('../controllers/Book_controler')
     const middleware = require('../middleware/auth.middleware');
     const upload = require('../upload.muler')
-    const pdftk = require('node-pdftk');
-    const path = require('path')
-    const models = require('../models/Book_model')
+
 
     router.get('/', (req, res) => {
         res.render('introduction.ejs')
@@ -24,9 +22,8 @@ module.exports = app => {
         .get('/category/:id', controller.categoryBook)
         .get('/all_category', controller.All_CataCategory)
         .get('/all_supplier', controller.All_supplier)
-        .get('/search', controller.searchProduct);
 
-
+    //api lấy file pdf chỉ 5 trang 
     router.get('/pdf-file/:id', controller.Cut_File_PDF);
 
     app.use(router);

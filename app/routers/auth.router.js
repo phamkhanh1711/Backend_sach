@@ -53,7 +53,6 @@ const middleware = require('../middleware/auth.middleware')
         .get('/register', AuthController.create)
         .get('/listAccount', AuthController.list_account)
         .get('/logout', AuthController.logout)
-        .get('/loginByGoogle');
     // Google OAuth routes
     // router
     //     .get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
