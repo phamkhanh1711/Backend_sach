@@ -13,6 +13,7 @@ module.exports = app => {
         res.render('home.ejs')
     })
 
+<<<<<<< HEAD
     router.get('/form_add_book', controller.ShowBook)
         .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
 
@@ -41,5 +42,20 @@ module.exports = app => {
         router.get('/pdf-file/:id', controller.Cut_File_PDF);
 
         
+=======
+    router.get('/form_add_book', controller.showDataNewBook)
+        .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
+
+    router.get('/book', controller.ShowBook)
+        .get('/book/detail/:id', controller.detailBooK)
+        .delete('/book/remove/:id', middleware.authAdmin, controller.removeBook)
+        .get('/category/:id', controller.categoryBook)
+        .get('/all_category', controller.All_CataCategory)
+        .get('/all_supplier', controller.All_supplier)
+
+    //api lấy file pdf chỉ 5 trang 
+    router.get('/pdf-file/:id', controller.Cut_File_PDF);
+
+>>>>>>> 3cea2c0208b4e19eb1d1dc95133ec20d6985ee01
     app.use(router);
 }

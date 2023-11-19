@@ -24,23 +24,27 @@ exports.addNewInfor = (req, res) => {
     };
 
     // The code below saves the user information to the database
-    Member.addInfor(newData, (err,data) => {
+    Member.addInfor(newData, (err, data) => {
         if (err) {
             console.log(err);
             res.json({ error: 'An error occurred while adding' });
         } else {
             console.log('User added to the database');
             const uploadedImagePath = req.file ? `/public/upload/${req.file.filename}` : null;
-            res.status(200).json({ message: 'Adding successfully', 
-            avatar: uploadedImagePath,
-            information: data });
+            res.status(200).json({
+                message: 'Adding successfully',
+                avatar: uploadedImagePath,
+                information: data
+            });
         }
     });
 }
 
 exports.detailUser = (req, res) => {
     const token = (req.get("Authorization")).split(" ")[1].trim();
+    console.log(req);
     const id = jwtDecode.jwtDecode(token, { header: false }).account_id;
+<<<<<<< HEAD
             console.log(id);
             Member.getUserById(id, (err, data) => {
                 if (err) {
@@ -53,6 +57,22 @@ exports.detailUser = (req, res) => {
                 }
             });
 };
+=======
+    console.log(id);
+    Member.getUserById(id, (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else if (!data) {
+            res.status(404).json({ error: 'User not found' });
+        } else {
+            res.status(200).json({ detail: data });
+            console.log(data);
+        }
+    });
+};
+
+>>>>>>> 3cea2c0208b4e19eb1d1dc95133ec20d6985ee01
 exports.delete_infor_User = (req, res) => {
     const token = (req.get("Authorization")).split(" ")[1].trim();
     const user_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
