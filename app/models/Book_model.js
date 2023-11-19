@@ -154,6 +154,20 @@ Book.upload = (newData, result) => {
     })
 }
 
+Book.upload_5page = (newData, result) => {
+    const db = 'INSERT INTO booK_img_file_5page SET ?';
+    sql.query(db, newData, (err, book) => {
+        if (err) {
+            console.error("Error inserting data:", err);
+            result(err, null)
+            return;
+        }
+        console.log("Data inserted successfully:", book);
+        result(null, book);
+    })
+}
+
+
 Book.get_image_fileDB = (id, callback) => {
     const db = `SELECT * FROM book_img_file WHERE book_id =${id}`
     sql.query(db, (err, data) => {

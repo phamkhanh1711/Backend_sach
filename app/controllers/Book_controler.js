@@ -181,13 +181,13 @@ exports.Cut_File_PDF = (req, res) => {
                 .output(outputPath);
             const newFile = {
                 book_id,
-                file_path: `output_${data.map(item => item.file_path)}`,
+                file_path_5page: `output_${data.map(item => item.file_path)}`,
                 image_path: `${data.map(item => item.image_path)}`
             }
-            Book.upload(newFile, () => {})
+            Book.upload_5page(newFile, () => {})
             res.json({
-                "File only 5 page :": outputPath,
-                "File original : ": inputPath
+                "File only 5 page:": outputPath,
+                "File original:": inputPath
             });
         } catch (error) {
             // If an error occurs, send an error response to the client

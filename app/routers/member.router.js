@@ -1,7 +1,7 @@
 module.exports = app => {
     var router = require('express').Router();
     const controller = require('../controllers/member/member.controller')
-    const controllerBook = require('../controllers/Book_controler   ')
+    const controllerBook = require('../controllers/Book_controler')
     const upload = require('../upload.muler')
     const middleware = require('../middleware/auth.middleware')
 
