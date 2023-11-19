@@ -53,3 +53,15 @@ exports.detailUser = (req, res) => {
                 }
             });
 };
+exports.delete_infor_User = (req, res) => {
+    const token = (req.get("Authorization")).split(" ")[1].trim();
+    const user_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
+
+    Member.deleteUser(user_id, (err) => {
+        if (err) {
+            res.json(err);
+        } else {
+            res.status(200).json({ message: 'Your infomation is deleted successfully' });
+        }
+    })
+}

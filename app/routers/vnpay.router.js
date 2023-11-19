@@ -15,7 +15,7 @@ module.exports = app => {
             var tmnCode = 'JVBVZYBR';
             var secretKey = 'IKYSMSBMFHKRMJQQYPFHTXNJBNBQNLIO';
             var vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-            var returnUrl = 'http://localhost:3031/vnpay';
+            var returnUrl = 'http://localhost:8081/vnpay';
 
             var date = new Date();
             var createDate = dateFormat(date, 'yyyymmddHHmmss');

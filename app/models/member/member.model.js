@@ -34,5 +34,15 @@ Member.getUserById = (id, callback) => {
         }
     });
 }
+Member.deleteUser = (id, result) => {
+    const db = `DELETE FROM user_info WHERE account_id=${id}`;
+    sql.query(db, (err, member) => {
+        if (err) {
+            console.log(err);
+            result(err, null);
+        } else {
 
+        }
+    });
+}
 module.exports = Member;
