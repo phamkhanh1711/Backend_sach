@@ -1,10 +1,20 @@
 const Book = require('../models/Book_model')
-const multer = require('multer');
 const pdftk = require('node-pdftk')
-    // hiển thị sách ra web
-exports.ShowBook = (req, res) => {
-    Book.getBook((data) => {
-        res.status(200).json({ listBooK: data });
+const jwtDecode = require("jwt-decode");
+
+
+// hiển thị sách ra web
+exports.ShowBook_full = (req, res) => {
+    Book.getBook_fullPage((data) => {
+        const bookFilePath = `/public/upload/${data.map(item => item.file_path)}`;
+        const imageFilePath = `/public/upload/${data.map(item => item.image_path)}`;
+
+        res.json({ data })
+    })
+}
+exports.ShowBook_5page = (req, res) => {
+    Book.getBook_5Page((data) => {
+        res.json({ data })
     })
 }
 
@@ -38,9 +48,8 @@ exports.All_supplier = (req, res) => {
     });
 };
 
-
 //Thêm sách mới
-exports.createNewBook = (req, res) => {
+exports.createNewBook = async(req, res) => {
     console.log(req.files);
     const newData = {
         book_title: req.body.bookTitle,
@@ -52,6 +61,7 @@ exports.createNewBook = (req, res) => {
     newData.category_id = req.body.category; // lấy id danh mục có sẵn
     newData.supplier_id = req.body.supplier;
     addNewBook(newData)
+
 
     function uploadFiles(Book_id) {
         // Upload file
@@ -87,16 +97,18 @@ exports.createNewBook = (req, res) => {
                 var book_id = bookData.id;
                 uploadFiles(book_id);
                 Book.get_image_fileDB(book_id, (dataUpload) => {
-
                     const bookFilePath = `/public/upload/${dataUpload.map(item => item.file_path)}`;
                     const imageFilePath = `/public/upload/${dataUpload.map(item => item.image_path)}`;
-
-                    res.json({ 'new booK': book_id, data, bookFilePath, imageFilePath })
+                    res.json({
+                        'new booK': book_id,
+                        data,
+                        bookFilePath,
+                        imageFilePath
+                    })
                 })
             }
         })
     };
-
     // function addNewCateg(data) {
     //     Book.addCategory(data, (err, category) => {
     //         if (err) {
@@ -113,6 +125,7 @@ exports.createNewBook = (req, res) => {
     //     });
     // }
 };
+
 //xóa sách 
 exports.removeBook = (req, res) => {
     var id = req.params.id;
@@ -168,6 +181,7 @@ exports.searchProduct = (req, res) => {
 
 // hàm cắt file pdf
 exports.Cut_File_PDF = (req, res) => {
+    // Book.getBook_fullPage((data) => {})
     var book_id = req.params.id
     Book.get_image_fileDB(book_id, (data) => {
         try {
@@ -186,8 +200,10 @@ exports.Cut_File_PDF = (req, res) => {
             }
             Book.upload_5page(newFile, () => {})
             res.json({
+                book_id,
                 "File only 5 page:": outputPath,
-                "File original:": inputPath
+                "File original:": inputPath,
+                message: "cut and save file PDF in db success"
             });
         } catch (error) {
             // If an error occurs, send an error response to the client
@@ -196,4 +212,28 @@ exports.Cut_File_PDF = (req, res) => {
         }
     })
 
+}
+
+//giỏ hàng
+exports.Add_Cart = (req, res, next) => {
+    const token = (req.get("Authorization")).split(" ")[1].trim();
+    const user_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
+    const book_id = req.params.id
+    const newData = {
+        user_id: 52,
+        book_id: book_id,
+        price: req.body.price,
+        total_price: req.body.price
+    }
+
+    Book.insertCart(newData, (err) => {
+        if (err) {
+            res.json(err)
+        } else {
+            res.json({
+                message: "Add into cart success!",
+                newData
+            })
+        }
+    })
 }
