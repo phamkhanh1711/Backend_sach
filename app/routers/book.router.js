@@ -2,8 +2,7 @@ module.exports = app => {
     var router = require('express').Router();
     const controller = require('../controllers/Book_controler')
     const middleware = require('../middleware/auth.middleware');
-    const upload = require('../upload.muler')
-
+    const commentController = require('../controllers/comment.controller')
 
     router.get('/', (req, res) => {
         res.render('introduction.ejs')
@@ -13,18 +12,20 @@ module.exports = app => {
         res.render('home.ejs')
     })
 
-    router.get('/form_add_book', controller.showDataNewBook)
-        .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
-
-    router.get('/book', controller.ShowBook)
+    router.get('/book', controller.ShowBook_full)
+        .get('/book_5page', controller.ShowBook_5page)
         .get('/book/detail/:id', controller.detailBooK)
-        .delete('/book/remove/:id', middleware.authAdmin, controller.removeBook)
         .get('/category/:id', controller.categoryBook)
         .get('/all_category', controller.All_CataCategory)
         .get('/all_supplier', controller.All_supplier)
+        .post('/add_cart/:id', controller.Add_Cart)
+        //   .get('./show_cart', controller.show_Cart)
 
-    //api lấy file pdf chỉ 5 trang 
-    router.get('/pdf-file/:id', controller.Cut_File_PDF);
-
+    router.post('/comments/:id', commentController.addComment)
+        .get('/comments/book/:id', commentController.getCommentsByBookId)
+        // Update a comment
+        .put('/comments/:id', commentController.updateComment)
+        // Delete a comment
+        .delete('/comments/:id', commentController.deleteComment)
     app.use(router);
 }

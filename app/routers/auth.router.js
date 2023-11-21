@@ -6,6 +6,9 @@ module.exports = (app) => {
     const cookieParser = require('cookie-parser');
     const passport = require('passport');
     const db = require('../models/db');
+    const middleware = require('../middleware/auth.middleware')
+
+
     app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
     app.use(passport.initialize());
     app.use(passport.session());
@@ -50,7 +53,7 @@ module.exports = (app) => {
         .post('/login', AuthController.login)
         .post('/register', AuthController.register)
         .get('/register', AuthController.create)
-        .get('/listAccount', AuthController.list_account)
+        .get('/listAccount', middleware.authAdmin, AuthController.list_account)
         .get('/logout', AuthController.logout)
         // Google OAuth routes
     router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))

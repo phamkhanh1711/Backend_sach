@@ -1,72 +1,162 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Thanh Toán VNPAY</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-
-        form {
-            width: 50%;
+        .container {
+            max-width: 800px;
             margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
-
+        
+        .header {
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
         label {
-            display: block;
-            margin-top: 10px;
             font-weight: bold;
         }
-
-        input, select {
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
         }
-
+        
+        textarea {
+            resize: vertical;
+        }
+        
         button {
             background-color: #007bff;
             color: #fff;
+            padding: 10px 15px;
             border: none;
-            padding: 10px 20px;
             cursor: pointer;
-            border-radius: 5px;
+            margin-right: 5px;
         }
-
+        
         button:hover {
             background-color: #0056b3;
         }
+        
+        .btn-default {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .btn-default:hover {
+            background-color: #e2e6ea;
+        }
     </style>
 </head>
+
 <body>
-    <form action="/create_payment_url" method="post">
-        <label for="orderDescription">Mô tả đơn hàng:</label>
-        <input type="text" name="orderDescription" id="orderDescription" placeholder="Nhập mô tả đơn hàng" required>
+    <div class="container">
+        <div class="header clearfix">
+            <h3 class="text-muted">VNPAY DEMO</h3>
+        </div>
+        <h3>Tạo mới đơn hàng</h3>
+        <div class="table-responsive">
+            <form action="/create_payment_url" method="post">
 
-        <label for="orderType">Loại đơn hàng:</label>
-        <select name="orderType" id="orderType">
-            <option value="topup">Nạp tiền điện thoại</option>
-            <option value="billpayment">Thanh toán hóa đơn</option>
-            <option value="fashion">Thời trang</option>
-        </select>
+                <div class="form-group">
+                    <label for="language">Loại hàng hóa </label>
+                    <select name="order_type" id="order_type" class="form-control">
+                        <option value="topup">Nạp tiền điện thoại</option>
+                        <option value="billpayment">Thanh toán hóa đơn</option>
+                        <option value="fashion">Thời trang</option>
+                        <option value="other">Khác - Xem thêm tại VNPAY</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="order_id">Mã hóa đơn</label>
+                    <input class="form-control" id="order_id" name="order_id" type="text" value="" />
+                </div>
+                <div class="form-group">
+                    <label for="amount">Số tiền</label>
+                    <input class="form-control" id="amount" name="amount" type="number" />
+                </div>
+                <div class="form-group">
+                    <label for="order_desc">Nội dung thanh toán</label>
+                    <input class="form-control" cols="20" id="order_desc" name="orderDescription" rows="2">
+                </div>
+                <div class="form-group">
+                    <label for="bank_code">Ngân hàng</label>
+                    <select name="bank_code" id="bank_code" class="form-control">
+                        <option value="">Không chọn</option>
+                        <option value="NCB"> Ngan hang NCB</option>
+                      
+                </div>
+                <div class="form-group">
+                    <label for="language">Ngôn ngữ</label>
+                    <select name="language" id="language" class="form-control">
+                        <option value="vn">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Thời hạn thanh toán</label>
+                    <input class="form-control" id="txtexpire" name="txtexpire" type="text" value="" />
+                </div>
+                <div class="form-group">
+                    <h3>Thông tin hóa đơn (Billing)</h3>
+                </div>
+                <div class="form-group">
+                    <label>Họ tên (*)</label>
+                    <input class="form-control" id="txt_billing_fullname" name="txt_billing_fullname" type="text" value="NGUYEN VAN XO" />
+                </div>
+                <div class="form-group">
+                    <label>Email (*)</label>
+                    <input class="form-control" id="txt_billing_email" name="txt_billing_email" type="text" value="xonv@vnpay.vn" />
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại (*)</label>
+                    <input class="form-control" id="txt_billing_mobile" name="txt_billing_mobile" type="text" value="0934998386" />
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ (*)</label>
+                    <input class="form-control" id="txt_billing_addr1" name="txt_billing_addr1" type="text" value="22 Lang Ha" />
+                </div>
+                <div class="form-group">
+                    <label>Mã bưu điện (*)</label>
+                    <input class="form-control" id="txt_postalcode" name="txt_postalcode" type="text" value="100000" />
+                </div>
+                <div class="form-group">
+                    <label>Tỉnh/TP (*)</label>
+                    <input class="form-control" id="txt_bill_city" name="txt_bill_city" type="text" value="Hà Nội" />
+                </div>
+                <div class="form-group">
+                    <label>Bang (Áp dụng cho US,CA)</label>
+                    <input class="form-control" id="txt_bill_state" name="txt_bill_state" type="text" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Quốc gia (*)</label>
+                    <input class="form-control" id="txt_bill_country" name="txt_bill_country" type="text" value="VN" />
+                </div>
+            </form>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnPopup" onclick="submitForm('post')">Thanh toán Post</button>
+        <button type="button" class="btn btn-default" id="redirect" onclick="submitForm('redirect')">Thanh toán Redirect</button>
+    </div>
 
-        <label for="language">Ngôn ngữ:</label>
-        <select name="language" id="language">
-            <option value="vn">Tiếng Việt</option>
-            <option value="en">English</option>
-        </select>
-
-        <label for="amount">Số tiền:</label>
-        <input type="number" name="amount" id="amount" placeholder="Số tiền" required>
-
-        <button type="submit">Thanh toán</button>
-    </form>
+    <script>
+        function submitForm(formType) {
+            var form = document.querySelector('form');
+            form.setAttribute('action', formType === 'post' ? '/create_payment_url' : '/redirect_payment_url');
+            form.submit();
+        }
+    </script>
 </body>
+
 </html>
