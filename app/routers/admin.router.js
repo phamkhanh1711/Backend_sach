@@ -6,7 +6,7 @@ module.exports = (app) => {
     const upload = require('../upload.muler')
     const controller = require('../controllers/Book_controler')
     const controller_user = require('../controllers/member/member.controller')
-        //manager account
+    //manager account
     router.get('/listAccount', middleware.authAdmin, AuthController.list_account)
         .delete('/member/delete', middleware.authMember, controller_user.delete_infor_User);
     //manager book
@@ -14,7 +14,7 @@ module.exports = (app) => {
         .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
         .delete('/book/remove/:id', middleware.authAdmin, controller.removeBook);
 
-    router.get('/cut_pdf-file/:id', middleware.authAdmin, controller.Cut_File_PDF);
+    router.get('/cut_pdf-file/:id', controller.Cut_File_PDF);
 
     app.use('/', router);
 };
