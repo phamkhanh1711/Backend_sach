@@ -111,7 +111,6 @@ module.exports = app => {
         var hmac = crypto.createHmac("sha512", secretKey);
         var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest("hex");
 
-
         if (secureHash === signed) {
 
             const db = `INSERT INTO receipt SET ?`
