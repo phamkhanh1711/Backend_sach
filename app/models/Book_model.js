@@ -25,25 +25,48 @@ Book.getBook_fullPage = (result) => {
     })
 }
 
-Book.getBook_5Page = (result) => {
-        const db = `
-    SELECT  book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
-    from book 
-    LEFT JOIN book_img_file_5page i 
-    ON book.book_id = i.book_id
-    GROUP BY book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
-`
-        sql.query(db, (err, book) => {
+Book.getBook_5Page = (id, result) => {
+    //         const db = `
+    //     SELECT  book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+    //     from book 
+    //     LEFT JOIN book_img_file_5page i 
+    //     ON book.book_id = i.book_id
+    //     GROUP BY book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+    // `
+    //         sql.query(db, (err, book) => {
+    //             if (err) {
+    //                 result(err, null)
+    //             } else {
+    //                 result(book)
+    //             }
+    //         })
+    const bookQuery = `
+        SELECT * FROM book_img_file WHERE book_id = ${id};
+    `;
+
+    sql.query(bookQuery, (err, bookInfo) => {
+        if (err) {
+            return result(err, null);
+        }
+
+        const page5Query = `
+            SELECT * FROM book_img_file_5page WHERE book_id = ${id};
+        `;
+
+        sql.query(page5Query, (err, page5Info) => {
             if (err) {
-                result(err, null)
-            } else {
-                result(book)
+                return result(err, null);
             }
-        })
-    }
-    //lấy tất cả sách trong db ra 
+
+            // Assuming you want to return both sets of data
+            result(null, { bookInfo, page5Info });
+        });
+    });
+
+}
+//lấy tất cả sách trong db ra 
 Book.getAllBook_infor = (result) => {
-        const db = `
+    const db = `
         SELECT  
         book.book_id,
         book.book_title
@@ -66,15 +89,15 @@ Book.getAllBook_infor = (result) => {
         book_category.category_name,book_category.category_id,
         s.supplier_name,s.supplier_id
     `
-        sql.query(db, (err, book) => {
-            if (err) {
-                result(err, null)
-            } else {
-                result(book)
-            }
-        })
-    }
-    //Lấy chi tiết từng sách 
+    sql.query(db, (err, book) => {
+        if (err) {
+            result(err, null)
+        } else {
+            result(book)
+        }
+    })
+}
+//Lấy chi tiết từng sách 
 Book.findByID = (id, result) => {
     const db = `
     SELECT * from book
@@ -336,7 +359,7 @@ Book.insertCart = (data, callback) => {
 
 
 // comment 
-const Comment = function(comment) {
+const Comment = function (comment) {
     this.book_id = comment.book_id;
     this.account_id = comment.account_id;
     this.name_user = comment.name_user;

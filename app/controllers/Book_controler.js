@@ -13,7 +13,8 @@ exports.ShowBook_full = (req, res) => {
     })
 }
 exports.ShowBook_5page = (req, res) => {
-    Book.getBook_5Page((data) => {
+    var id = req.params.id
+    Book.getBook_5Page(id, (data) => {
         res.json({ data })
     })
 }
@@ -49,7 +50,7 @@ exports.All_supplier = (req, res) => {
 };
 
 //Thêm sách mới
-exports.createNewBook = async(req, res) => {
+exports.createNewBook = async (req, res) => {
     console.log(req.files);
     const newData = {
         book_title: req.body.bookTitle,
@@ -109,6 +110,33 @@ exports.createNewBook = async(req, res) => {
             }
         })
     };
+
+
+    function cutfile_PDF(id) {
+        Book.get_image_fileDB(id, (data) => {
+            try {
+                // Construct the absolute paths for the input and output PDF files
+                const inputPath = `/public/upload/${data.map(item => item.file_path)}`
+                // tạo file output.pdf
+                const outputPath = `public/upload/output_${data.map(item => item.file_path)}`;
+                // Use node-pdftk to process the PDF
+                pdftk.input(inputPath)
+                    .cat('1-5') // Keep only page 1
+                    .output(outputPath);
+                const newFile = {
+                    id,
+                    file_path_5page: `output_${data.map(item => item.file_path)}`,
+                    image_path: `${data.map(item => item.image_path)}`
+                }
+                Book.upload_5page(newFile, () => { })
+
+            } catch (error) {
+                // If an error occurs, send an error response to the client
+                console.error("Error:", error);
+            }
+        })
+
+    }
     // function addNewCateg(data) {
     //     Book.addCategory(data, (err, category) => {
     //         if (err) {
@@ -127,6 +155,7 @@ exports.createNewBook = async(req, res) => {
 };
 
 //xóa sách 
+
 exports.removeBook = (req, res) => {
     var id = req.params.id;
     Book.Remove(id, (err) => {
@@ -187,7 +216,7 @@ exports.Cut_File_PDF = (req, res) => {
         try {
             // Construct the absolute paths for the input and output PDF files
             const inputPath = `/public/upload/${data.map(item => item.file_path)}`
-                // tạo file output.pdf
+            // tạo file output.pdf
             const outputPath = `public/upload/output_${data.map(item => item.file_path)}`;
             // Use node-pdftk to process the PDF
             pdftk.input(inputPath)
@@ -198,7 +227,7 @@ exports.Cut_File_PDF = (req, res) => {
                 file_path_5page: `output_${data.map(item => item.file_path)}`,
                 image_path: `${data.map(item => item.image_path)}`
             }
-            Book.upload_5page(newFile, () => {})
+            Book.upload_5page(newFile, () => { })
             res.json({
                 book_id,
                 "File only 5 page:": outputPath,

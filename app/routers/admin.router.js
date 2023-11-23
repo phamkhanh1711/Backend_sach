@@ -14,7 +14,6 @@ module.exports = (app) => {
         .post('/add_book', upload.fields([{ name: 'fileElem' }, { name: 'myImage' }]), controller.createNewBook)
         .delete('/book/remove/:id', middleware.authAdmin, controller.removeBook);
 
-    router.get('/cut_pdf-file/:id', controller.Cut_File_PDF);
 
     app.use('/', router);
 };

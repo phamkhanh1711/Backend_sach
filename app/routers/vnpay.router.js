@@ -126,20 +126,14 @@ module.exports = app => {
 
             if (vnp_Params['vnp_ResponseCode'] == 00) {
                 res.status(200).json({ vnp_Params, Message: 'Payment success' })
-
-
             } else if (vnp_Params['vnp_ResponseCode'] == 24) {
                 res.status(200).json({ Message: 'Payment cancel', vnp_Params })
             } else {
                 res.status(200).json({ Message: 'Payment failed' })
             }
-
         } else {
             res.status(200).json({ RspCode: '97', Message: 'Fail checksum' })
-
         }
-
-
     })
 
     app.use(router)

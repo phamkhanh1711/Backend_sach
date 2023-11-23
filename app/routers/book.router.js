@@ -13,13 +13,15 @@ module.exports = app => {
     })
 
     router.get('/book', controller.ShowBook_full)
-        .get('/book_5page', controller.ShowBook_5page)
         .get('/book/detail/:id', controller.detailBooK)
         .get('/category/:id', controller.categoryBook)
         .get('/all_category', controller.All_CataCategory)
         .get('/all_supplier', controller.All_supplier)
-        .post('/add_cart/:id', controller.Add_Cart)
-        //   .get('./show_cart', controller.show_Cart)
+
+    //giỏ hàng
+    router.post('/add_cart/:id', controller.Add_Cart)
+    //.get('/show_cart', controller.show_Cart)
+
 
     router.post('/comments/:id', commentController.addComment)
         .get('/comments/book/:id', commentController.getCommentsByBookId)
@@ -27,5 +29,8 @@ module.exports = app => {
         .put('/comments/:id', commentController.updateComment)
         // Delete a comment
         .delete('/comments/:id', commentController.deleteComment)
+
+    router.get('/cut_pdf-file/:book_id', controller.Cut_File_PDF)
+        .get('/book_5page/:user_id', controller.ShowBook_5page)
     app.use(router);
 }
