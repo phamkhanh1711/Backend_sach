@@ -28,13 +28,13 @@ module.exports = app => {
                 var date = new Date();
                 var createDate = dateFormat(date, 'yyyymmddHHMMss');
                 var orderId = dateFormat(date, 'HHmmss');
-                // var amount = req.body.amount;
-                // var orderInfo = req.body.orderDescription;
-                // var orderType = req.body.orderType;
-                // var locale = req.body.language;
-                var amount = 11000
-                var orderInfo = 'thanh toan vnpay nodejs';
-                var orderType = 'payment';
+                var amount = req.body.amount;
+                var orderInfo = req.body.orderDescription;
+                var orderType = req.body.orderType;
+                var locale = req.body.language;
+                // var amount = 11000
+                // var orderInfo = 'thanh toan vnpay nodejs';
+                // var orderType = 'payment';
                 var locale = req.body.language;
                 if (!locale) {
                     locale = 'vn';
