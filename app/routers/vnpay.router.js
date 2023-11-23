@@ -131,6 +131,7 @@ module.exports = app => {
             } else {
                 res.status(200).json({ Message: 'Payment failed' })
             }
+
         } else {
             res.status(200).json({ RspCode: '97', Message: 'Fail checksum' })
         }
