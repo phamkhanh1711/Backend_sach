@@ -2,6 +2,7 @@ const Member = require('../../models/member/member.model');
 require('dotenv/config');
 const jwt = require('jsonwebtoken');
 const jwtDecode = require("jwt-decode");
+const { price } = require('../../models/Book_model');
 
 exports.show = (req, res) => {
     res.render('formAdd_Infor.ejs')
@@ -29,7 +30,7 @@ exports.addNewInfor = (req, res) => {
             console.log(err);
             res.json({ error: 'An error occurred while adding' });
         } else {
-            console.log('User added to the database');
+
             const uploadedImagePath = req.file ? `/public/upload/${req.file.filename}` : null;
             res.status(200).json({
                 message: 'Adding successfully',
@@ -70,3 +71,47 @@ exports.delete_infor_User = (req, res) => {
         }
     })
 }
+
+//giỏ hàng
+exports.Add_Cart = (req, res, next) => {
+    const token = (req.get("Authorization")).split(" ")[1].trim();
+    const account_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
+
+    const newData = {
+        account_id,
+        book_id: req.params.book_id,
+        price: req.body.price,
+        total_price: req.body.total_price
+    }
+    Member.insertCart(newData, (err) => {
+        if (err) {
+            res.json(err);
+        } else {
+            res.json({
+                message: "Add into cart success!",
+                newData,
+                currentCart
+            });
+        }
+    });
+}
+
+exports.showCart = (req, res) => {
+    var account_id = req.params.id;
+    Member.getInfo_CartByUser(account_id, (err, data) => {
+        if (err) {
+            res.json(err)
+        }
+        else {
+            var total_price = 0
+            data.map((item) => {
+                total_price += item.price
+            })
+            res.json({
+                "list cart": data,
+                "total price": total_price
+            })
+        }
+    })
+}
+

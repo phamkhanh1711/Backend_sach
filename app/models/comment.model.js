@@ -1,5 +1,5 @@
 const sql = require('./db');
-const Comment = function(comment) {
+const Comment = function (comment) {
     this.book_id = comment.book_id;
     this.account_id = comment.account_id;
     this.name_user = comment.name_user;
@@ -29,6 +29,7 @@ Comment.getCommentsByBookId = (bookId, result) => {
     const db = 'SELECT * FROM comment_rating WHERE book_id = ?';
     sql.query(db, [bookId], (err, comments) => {
         if (err) {
+            console.log("error db:", err);
             result(err, null);
         } else {
             result(null, comments);

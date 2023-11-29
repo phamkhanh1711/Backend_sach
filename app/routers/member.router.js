@@ -10,5 +10,9 @@ module.exports = app => {
         .post('/member/add_infomation', middleware.authMember, upload.single('avatar'), controller.addNewInfor)
         .delete('/member/delete', middleware.authMember, controller.delete_infor_User)
         .get('/search', controllerBook.searchProduct);
+
+    //giỏ hàng
+    router.post('/add_cart/:book_id', controller.Add_Cart)
+        .get('/cart/:id', controller.showCart)
     app.use(router)
 }
