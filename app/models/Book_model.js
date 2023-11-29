@@ -26,42 +26,21 @@ Book.getBook_fullPage = (result) => {
 }
 
 Book.getBook_5Page = (id, result) => {
-    //         const db = `
-    //     SELECT  book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
-    //     from book 
-    //     LEFT JOIN book_img_file_5page i 
-    //     ON book.book_id = i.book_id
-    //     GROUP BY book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
-    // `
-    //         sql.query(db, (err, book) => {
-    //             if (err) {
-    //                 result(err, null)
-    //             } else {
-    //                 result(book)
-    //             }
-    //         })
-    const bookQuery = `
-        SELECT * FROM book_img_file WHERE book_id = ${id};
-    `;
-
-    sql.query(bookQuery, (err, bookInfo) => {
+    const db = `
+        SELECT  book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+        from book 
+        LEFT JOIN book_img_file_5page i 
+        ON book.book_id = i.book_id
+        WHERE i.book_id = ${id}
+        GROUP BY book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+    `
+    sql.query(db, (err, book) => {
         if (err) {
-            return result(err, null);
+            result(err, null)
+        } else {
+            result(book)
         }
-
-        const page5Query = `
-            SELECT * FROM book_img_file_5page WHERE book_id = ${id};
-        `;
-
-        sql.query(page5Query, (err, page5Info) => {
-            if (err) {
-                return result(err, null);
-            }
-
-            // Assuming you want to return both sets of data
-            result(null, { bookInfo, page5Info });
-        });
-    });
+    })
 
 }
 //lấy tất cả sách trong db ra 
@@ -148,6 +127,7 @@ Book.addBook = (newData, result) => {
 //xóa sách 
 Book.Remove = (id, result) => {
     const deleteImgQuery = `DELETE FROM book_img_file WHERE book_id = ${id}`;
+    const deleteBookQuery_5page = `DELETE FROM book_img_file_5page WHERE book_id = ${id}`;
     const deleteBookQuery = `DELETE FROM book WHERE book_id = ${id}`;
 
     sql.query(deleteImgQuery, (err) => {
@@ -156,13 +136,19 @@ Book.Remove = (id, result) => {
             return;
         }
 
-        sql.query(deleteBookQuery, (err) => {
+        sql.query(deleteBookQuery_5page, (err) => {
             if (err) {
                 result(err, null);
                 return;
             }
 
-            result("xóa dữ liệu sách có id: " + id + " Thành công!");
+            sql.query(deleteBookQuery, (err) => {
+                if (err) {
+                    result(err, null);
+                    return;
+                }
+                result("xóa dữ liệu sách có id: " + id + " Thành công!");
+            });
         });
     });
 };
@@ -195,27 +181,35 @@ Book.upload = (newData, result) => {
 }
 
 Book.upload_5page = (newData, callback) => {
-    const checkQuery = `SELECT * FROM booK_img_file_5page WHERE book_id=${newData.book_id}`;
-    sql.query(checkQuery, (err, checkData) => {
+    // const checkQuery = `SELECT * FROM booK_img_file_5page WHERE book_id=${newData.book_id}`;
+    // sql.query(checkQuery, (err, checkData) => {
+    //     if (err) {
+    //         console.error("Error checking book_id existence:", err);
+    //         callback(err, null);
+    //         return;
+    //     }
+    //     if (checkData && checkData.length > 0) {
+    //         // Nếu book_id đã tồn tại, không thực hiện thêm dữ liệu mới
+    //         callback({ message: "Book with this ID already exists in booK_img_file_5page. Upload not allowed." }, null);
+    //     } else {
+    //         // Nếu book_id chưa tồn tại, thực hiện thêm dữ liệu mới
+    //         const db = 'INSERT INTO booK_img_file_5page SET ?';
+    //         sql.query(db, newData, (err, book) => {
+    //             if (err) {
+    //                 console.error("Error inserting data:", err);
+    //                 callback(err, null);
+    //             }
+    //             callback(null, book);
+    //         });
+    //     }
+    // });
+    const db = 'INSERT INTO booK_img_file_5page SET ?';
+    sql.query(db, newData, (err, book) => {
         if (err) {
-            console.error("Error checking book_id existence:", err);
+            console.error("Error inserting data:", err);
             callback(err, null);
-            return;
         }
-        if (checkData && checkData.length > 0) {
-            // Nếu book_id đã tồn tại, không thực hiện thêm dữ liệu mới
-            callback({ message: "Book with this ID already exists in booK_img_file_5page. Upload not allowed." }, null);
-        } else {
-            // Nếu book_id chưa tồn tại, thực hiện thêm dữ liệu mới
-            const db = 'INSERT INTO booK_img_file_5page SET ?';
-            sql.query(db, newData, (err, book) => {
-                if (err) {
-                    console.error("Error inserting data:", err);
-                    callback(err, null);
-                }
-                callback(null, book);
-            });
-        }
+        callback(null, book);
     });
 };
 
@@ -343,19 +337,6 @@ Book.searchByName = (searchTerm, result) => {
     });
 };
 
-
-//giỏ hàng
-Book.insertCart = (data, callback) => {
-    const db = `INSERT INTO cart SET ?`
-    sql.query(db, data, (err) => {
-        if (err) {
-            console.error("Error inserting data:", err);
-            callback(err, null)
-        } else {
-            callback(data, null)
-        }
-    })
-}
 
 
 // comment 

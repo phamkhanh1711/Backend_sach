@@ -45,4 +45,30 @@ Member.deleteUser = (id, result) => {
         }
     });
 }
+
+//giỏ hàng
+Member.insertCart = (data, callback) => {
+    const db = `INSERT INTO cart SET ?`
+    sql.query(db, data, (err) => {
+        if (err) {
+            console.error("Error inserting data:", err);
+            callback(err, null)
+        } else {
+            callback(data, null)
+        }
+    })
+}
+
+Member.getInfo_CartByUser = (id, callback) => {
+    const db = `SELECT * FROM cart WHERE account_id = ${id}`
+    sql.query(db, (err, data) => {
+        if (err) {
+            console.log("error db:", err);
+            callback(err, null)
+        } else {
+            callback(null, data)
+        }
+    })
+}
+
 module.exports = Member;
