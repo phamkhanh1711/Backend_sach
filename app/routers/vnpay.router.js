@@ -1,9 +1,7 @@
-const { json } = require('body-parser');
-const mysql = require('../models/db')
 
 module.exports = app => {
     const router = require('express').Router();
-    const mysql = require('../models/db')
+    const sql = require('../models/db')
     // Ngân hàng	NCB
     // Số thẻ	9704198526191432198
     // Tên chủ thẻ	NGUYEN VAN A
@@ -28,13 +26,12 @@ module.exports = app => {
                 var date = new Date();
                 var createDate = dateFormat(date, 'yyyymmddHHMMss');
                 var orderId = dateFormat(date, 'HHmmss');
-                // var amount = req.body.amount;
-                // var orderInfo = req.body.orderDescription;
-                // var orderType = req.body.orderType;
-                var locale = req.body.language;
-                var amount = 11000
-                var orderInfo = 'thanh toan vnpay nodejs';
-                var orderType = 'payment';
+                var amount = req.body.amount;
+                var orderInfo = req.body.orderDescription;
+                var orderType = req.body.orderType;
+                // var amount = 11000
+                // var orderInfo = 'thanh toan vnpay nodejs';
+                // var orderType = 'payment';
                 var locale = req.body.language;
                 if (!locale) {
                     locale = 'vn';
@@ -114,7 +111,7 @@ module.exports = app => {
         if (secureHash === signed) {
 
             const db = `INSERT INTO receipt SET ?`
-            mysql.query(db, vnp_Params, (err) => {
+            sql.query(db, vnp_Params, (err) => {
                 if (err) {
                     console.log('ERR:', err);
                 } else {
