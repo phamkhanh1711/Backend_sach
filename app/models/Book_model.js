@@ -8,25 +8,44 @@ const Book = (book) => {
     this.supplier_id = -book.supplier_id
     this.category_id = book.category_id
 }
-Book.getBook = (result) => {
-        const db = `
-    SELECT  book.book_id,book.book_title,book.price, book_img_file.image_path
+Book.getBook_fullPage = (result) => {
+    const db = `
+    SELECT  book.book_id,book.book_title,book.price, i.file_path,i.image_path
     from book 
-    LEFT JOIN book_img_file  
-    ON book.book_id = book_img_file.book_id
-    GROUP BY book.book_id,book.book_title,book.price, book_img_file.image_path
+    LEFT JOIN book_img_file i
+    ON book.book_id = i.book_id
+    GROUP BY  book.book_id,book.book_title,book.price, i.file_path,i.image_path
     `
-        sql.query(db, (err, book) => {
-            if (err) {
-                result(err, null)
-            } else {
-                result(book)
-            }
-        })
-    }
-    //lấy tất cả sách trong db ra 
-Book.getAllBook = (result) => {
-        const db = `
+    sql.query(db, (err, book) => {
+        if (err) {
+            result(err, null)
+        } else {
+            result(book)
+        }
+    })
+}
+
+Book.getBook_5Page = (id, result) => {
+    const db = `
+        SELECT  book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+        from book 
+        LEFT JOIN book_img_file_5page i 
+        ON book.book_id = i.book_id
+        WHERE i.book_id = ${id}
+        GROUP BY book.book_id,book.book_title,book.price, i.file_path_5page,i.image_path
+    `
+    sql.query(db, (err, book) => {
+        if (err) {
+            result(err, null)
+        } else {
+            result(book)
+        }
+    })
+
+}
+//lấy tất cả sách trong db ra 
+Book.getAllBook_infor = (result) => {
+    const db = `
         SELECT  
         book.book_id,
         book.book_title
@@ -49,15 +68,15 @@ Book.getAllBook = (result) => {
         book_category.category_name,book_category.category_id,
         s.supplier_name,s.supplier_id
     `
-        sql.query(db, (err, book) => {
-            if (err) {
-                result(err, null)
-            } else {
-                result(book)
-            }
-        })
-    }
-    //Lấy chi tiết từng sách 
+    sql.query(db, (err, book) => {
+        if (err) {
+            result(err, null)
+        } else {
+            result(book)
+        }
+    })
+}
+//Lấy chi tiết từng sách 
 Book.findByID = (id, result) => {
     const db = `
     SELECT * from book
@@ -108,6 +127,7 @@ Book.addBook = (newData, result) => {
 //xóa sách 
 Book.Remove = (id, result) => {
     const deleteImgQuery = `DELETE FROM book_img_file WHERE book_id = ${id}`;
+    const deleteBookQuery_5page = `DELETE FROM book_img_file_5page WHERE book_id = ${id}`;
     const deleteBookQuery = `DELETE FROM book WHERE book_id = ${id}`;
 
     sql.query(deleteImgQuery, (err) => {
@@ -116,20 +136,22 @@ Book.Remove = (id, result) => {
             return;
         }
 
-        sql.query(deleteBookQuery, (err) => {
+        sql.query(deleteBookQuery_5page, (err) => {
             if (err) {
                 result(err, null);
                 return;
             }
 
-            result("xóa dữ liệu sách có id: " + id + " Thành công!");
+            sql.query(deleteBookQuery, (err) => {
+                if (err) {
+                    result(err, null);
+                    return;
+                }
+                result("xóa dữ liệu sách có id: " + id + " Thành công!");
+            });
         });
     });
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 3cea2c0208b4e19eb1d1dc95133ec20d6985ee01
 
 // //Sửa thông tin sách 
 // Book.update = (data, result) => {
@@ -158,10 +180,41 @@ Book.upload = (newData, result) => {
     })
 }
 
-<<<<<<< HEAD
-=======
+Book.upload_5page = (newData, callback) => {
+    // const checkQuery = `SELECT * FROM booK_img_file_5page WHERE book_id=${newData.book_id}`;
+    // sql.query(checkQuery, (err, checkData) => {
+    //     if (err) {
+    //         console.error("Error checking book_id existence:", err);
+    //         callback(err, null);
+    //         return;
+    //     }
+    //     if (checkData && checkData.length > 0) {
+    //         // Nếu book_id đã tồn tại, không thực hiện thêm dữ liệu mới
+    //         callback({ message: "Book with this ID already exists in booK_img_file_5page. Upload not allowed." }, null);
+    //     } else {
+    //         // Nếu book_id chưa tồn tại, thực hiện thêm dữ liệu mới
+    //         const db = 'INSERT INTO booK_img_file_5page SET ?';
+    //         sql.query(db, newData, (err, book) => {
+    //             if (err) {
+    //                 console.error("Error inserting data:", err);
+    //                 callback(err, null);
+    //             }
+    //             callback(null, book);
+    //         });
+    //     }
+    // });
+    const db = 'INSERT INTO booK_img_file_5page SET ?';
+    sql.query(db, newData, (err, book) => {
+        if (err) {
+            console.error("Error inserting data:", err);
+            callback(err, null);
+        }
+        callback(null, book);
+    });
+};
+
 Book.get_image_fileDB = (id, callback) => {
-    const db = `SELECT * FROM book_img_file WHERE book_id =${id}`
+    const db = `SELECT * FROM book_img_file WHERE book_id=${id}`
     sql.query(db, (err, data) => {
         if (err) {
             callback(err, null)
@@ -170,7 +223,17 @@ Book.get_image_fileDB = (id, callback) => {
         }
     })
 }
->>>>>>> 3cea2c0208b4e19eb1d1dc95133ec20d6985ee01
+
+Book.get_image_fileDB_5page = (id, callback) => {
+    const db = `SELECT * FROM book_img_file_5page WHERE book_id=${id}`
+    sql.query(db, (err, data) => {
+        if (err) {
+            callback(err, null)
+        } else {
+            callback(data)
+        }
+    })
+}
 Book.getCategory = (result) => {
     const db = `
     SELECT *
@@ -273,23 +336,45 @@ Book.searchByName = (searchTerm, result) => {
         }
     });
 };
-<<<<<<< HEAD
 
-Book.get_image_fileDB = (id, callback) => {
-    const db = `SELECT * FROM book_img_file WHERE book_id =${id}`
-    sql.query(db, (err, data) => {
+
+// comment 
+const Comment = function (comment) {
+    this.book_id = comment.book_id;
+    this.account_id = comment.account_id;
+    this.name_user = comment.name_user;
+    this.comments = comment.comments; // Ensure this line is correct
+    this.created_at = new Date();
+    this.updated_at = new Date();
+};
+
+Comment.addComment = (newComment, result) => {
+    console.log(newComment);
+    sql.query('INSERT INTO comments SET ?', newComment, (err, res) => {
         if (err) {
-            callback(err, null)
+            result(err, null);
         } else {
-            callback(data)
+            // Fetch the inserted comment by its ID
+            sql.query('SELECT * FROM comments WHERE id = ?', res.insertId, (err, comment) => {
+                if (err) {
+                    result(err, null);
+                } else {
+                    result(null, comment[0]); // Assuming the ID is unique, so we return the first (and only) element
+                }
+            });
         }
-    })
-}
-module.exports = Book;
+    });
+};
+Comment.getCommentsByBookId = (bookId, result) => {
+    const db = 'SELECT * FROM comments WHERE book_id = ?';
+    sql.query(db, [bookId], (err, comments) => {
+        if (err) {
+            result(err, null);
+        } else {
+            result(null, comments);
+        }
+    });
+};
 
-
-
-
-=======
-module.exports = Book;
->>>>>>> 3cea2c0208b4e19eb1d1dc95133ec20d6985ee01
+// Add other comment-related functions as needed
+module.exports = Book, Comment;
