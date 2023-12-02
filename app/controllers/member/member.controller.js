@@ -2,7 +2,7 @@ const Member = require('../../models/member/member.model');
 require('dotenv/config');
 const jwt = require('jsonwebtoken');
 const jwtDecode = require("jwt-decode");
-const { price } = require('../../models/Book_model');
+const book = require('../../models/Book_model')
 
 exports.show = (req, res) => {
     res.render('formAdd_Infor.ejs')
@@ -76,24 +76,26 @@ exports.delete_infor_User = (req, res) => {
 exports.Add_Cart = (req, res, next) => {
     const token = (req.get("Authorization")).split(" ")[1].trim();
     const account_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
-
-    const newData = {
-        account_id,
-        book_id: req.params.book_id,
-        price: req.body.price,
-        total_price: req.body.total_price
-    }
-    Member.insertCart(newData, (err) => {
-        if (err) {
-            res.json(err);
-        } else {
-            res.json({
-                message: "Add into cart success!",
-                newData,
-                currentCart
-            });
+    let book_id = req.params.book_id
+    book.findByID(book_id, (data) => {
+        let price
+        const newData = {
+            account_id,
+            book_id: book_id,
+            price: data[0].price
         }
-    });
+        Member.insertCart(newData, (err) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json({
+                    message: "Add into cart success!",
+                    newData,
+                    currentCart
+                });
+            }
+        });
+    })
 }
 
 exports.showCart = (req, res) => {

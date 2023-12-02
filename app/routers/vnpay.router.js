@@ -9,10 +9,6 @@ module.exports = app => {
     // Mật khẩu OTP	123456
     router.post('/create_payment_url', function (req, res, next) {
         try {
-            // var ipAddr = req.headers['x-forwarded-for'] ||
-            //     req.connection.remoteAddress ||
-            //     req.socket.remoteAddress ||
-            //     req.connection.socket.remoteAddress;
             var ipAddr = '127.0.0.1'
 
             import('dateformat').then((module) => {
@@ -27,16 +23,13 @@ module.exports = app => {
                 var createDate = dateFormat(date, 'yyyymmddHHMMss');
                 var orderId = dateFormat(date, 'HHmmss');
                 var amount = req.body.amount;
-                var orderInfo = req.body.orderDescription;
-                var orderType = req.body.orderType;
-                // var amount = 11000
-                // var orderInfo = 'thanh toan vnpay nodejs';
-                // var orderType = 'payment';
-                var locale = req.body.language;
-                if (!locale) {
-                    locale = 'vn';
-                }
+                // var orderInfo = req.body.orderDescription;
+                // var orderType = req.body.orderType;
+                var orderInfo = "nannaaa";
+                var orderType = 'topo';
+                var locale = 'vn';
                 var currCode = 'VND';
+                var bankCode = 'NCB';
 
                 let vnp_Params = {};
                 vnp_Params['vnp_Version'] = '2.1.0';
@@ -51,7 +44,7 @@ module.exports = app => {
                 vnp_Params['vnp_ReturnUrl'] = returnUrl;
                 vnp_Params['vnp_IpAddr'] = ipAddr;
                 vnp_Params['vnp_CreateDate'] = createDate;
-
+                // vnp_Params['vnp_BankCode'] = bankCode
 
                 vnp_Params = sortObject(vnp_Params);
 

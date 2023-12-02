@@ -27,5 +27,6 @@ module.exports = app => {
 
     router.get('/cut_pdf-file/:book_id', controller.Cut_File_PDF)
         .get('/book_5page/:book_id', controller.ShowBook_5page_byID)
+        .get('/all-book-5page', controller.ShowALLBook_5page)
     app.use(router);
 }

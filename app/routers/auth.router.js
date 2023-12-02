@@ -13,11 +13,11 @@ module.exports = (app) => {
     app.use(passport.initialize());
     app.use(passport.session());
     // Serialize and deserialize user
-    passport.serializeUser(function(user, cb) {
+    passport.serializeUser(function (user, cb) {
         cb(null, user);
     });
 
-    passport.deserializeUser(function(obj, cb) {
+    passport.deserializeUser(function (obj, cb) {
         cb(null, obj);
     });
 
@@ -30,7 +30,7 @@ module.exports = (app) => {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: 'http://localhost:3031/auth/google/callback',
-    }, function(accessToken, refreshToken, profile, done) {
+    }, function (accessToken, refreshToken, profile, done) {
         const user = {
             googleId: profile.id,
             username: profile.displayName,
@@ -48,15 +48,12 @@ module.exports = (app) => {
     }));
 
     // Register and Login routes
-    router
-        .get('/login', AuthController.showLoginForm)
-        .post('/login', AuthController.login)
+    router.post('/login', AuthController.login)
         .post('/register', AuthController.register)
-        .get('/register', AuthController.create)
         .get('/listAccount', middleware.authAdmin, AuthController.list_account)
         .get('/logout', AuthController.logout)
         // Google OAuth routes
-    router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+        .get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
         .get('/auth/google/callback', (req, res, next) => {
             passport.authenticate('google', (err, user, info) => {
                 if (err) {

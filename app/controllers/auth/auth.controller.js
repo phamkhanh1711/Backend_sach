@@ -3,20 +3,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv/config');
 
-exports.create = (req, res) => {
-    res.render('auth/register');
-}
 
 exports.getAll = (req, res) => {
     User.getAll_Account((data) => {
         return res.json({ dataUser: data });
 
     })
-}
-
-// login
-exports.showLoginForm = (req, res) => {
-    res.render('auth/login');
 }
 
 exports.login = (req, res) => {
@@ -45,7 +37,7 @@ exports.login = (req, res) => {
                             secure: true,
                             SameSite: 'strict',
                             expires: new Date(Number(new Date()) + 30 * 60 * 1000)
-                        }) 
+                        })
                         res.json({
                             success: true,
                             message: 'Login successful',

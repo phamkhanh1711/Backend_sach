@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Giỏ hàng</title>
+  <style>
+      body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+.cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.item {
+  display: flex;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.item img {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.remove-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.checkout-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Giỏ hàng</h1>
+  </header>
+
+  <section class="cart">
+    <% for(let i = 0; i < Data.length ; i++) { %>
+        <div class="item">
+            <img src="product1.jpg" alt="Product">
+            <div class="item-details">
+                <h2><%= Data[i].book_id %></h2>
+                <p><%= Data[i].price %></p>
+                <button class="remove-btn">Remove</button>
+            </div>
+        </div>
+    <% } %>
+</section>
+<form action="/create_payment_url" method="post">
+  <% let totalSum = 0; %>
+
+  <% for (let i = 0; i < Data.length; i++) { %>
+      <% totalSum += Data[i].price; %>
+  <% } %>
+
+  <!-- Add a hidden input field for the amount -->
+  <input type="hidden" name="amount" value="<%= totalSum %>">
+
+  <p>Total: <%= totalSum %></p>
+  <button type="submit" class="checkout-btn">Checkout</button>
+</form>
+</body>
+</html>

@@ -9,13 +9,7 @@ exports.ShowBook_full = (req, res) => {
         const bookFilePath = `/public/upload/${data.map(item => item.file_path)}`;
         const imageFilePath = `/public/upload/${data.map(item => item.image_path)}`;
 
-        res.json({ data })
-    })
-}
-exports.ShowBook_5page_byID = (req, res) => {
-    var book_id = req.params.book_id
-    Book.getBook_5Page(book_id, (data) => {
-        res.json({ data })
+        res.json({ data, bookFilePath, imageFilePath })
     })
 }
 
@@ -245,3 +239,23 @@ exports.Cut_File_PDF = (req, res) => {
 
 }
 
+exports.ShowBook_5page_byID = (req, res) => {
+    var book_id = req.params.book_id
+    Book.getBook_5Page(book_id, (data) => {
+        const bookFilePath_5page = `/public/upload/${data.map(item => item.file_path_5page)}`;
+        const imageFilePath = `/public/upload/${data.map(item => item.image_path)}`;
+        res.json({ data, bookFilePath_5page, imageFilePath })
+    })
+}
+
+exports.ShowALLBook_5page = (req, res) => {
+    Book.getAll_image_fileDB_5page((data) => {
+        let bookFilePath_5page
+        let imageFilePath
+        data.map((item => {
+            bookFilePath_5page = `/public/upload/${item => item.file_path_5page}`;
+            imageFilePath = `/public/upload/${item => item.image_path}`;
+        }))
+        res.json({ data, bookFilePath_5page, imageFilePath })
+    })
+}
