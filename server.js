@@ -7,18 +7,18 @@ const passport = require('passport');
 const session = require('express-session')
 
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     cb(null, user);
 });
 
-passport.deserializeUser(function(obj, cb) {
+passport.deserializeUser(function (obj, cb) {
     cb(null, obj);
 });
 
 
 app.use(express.json());
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
-app.use(methodOverride(function(req, res) {
+app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
         var method = req.body._method;
         delete req.body._method;
@@ -34,14 +34,13 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors({
-    origin: 'http://localhost:3031',
-    credentials: true
-}));
-
 app.set('view engine', 'ejs');
 app.set('views', 'app/views');
 
+app.use(cors({
+    origin: '*',
+    credentials: true
+}));
 require('./app/routers/router')(app);
 
 app.listen(3031, () => {
