@@ -53,7 +53,6 @@ module.exports = app => {
                     vnp_Params['vnp_ReturnUrl'] = returnUrl;
                     vnp_Params['vnp_IpAddr'] = ipAddr;
                     vnp_Params['vnp_CreateDate'] = createDate;
-                    //vnp_Params['vnp_BankCode'] = bankCode
 
                     vnp_Params = sortObject(vnp_Params);
 
@@ -114,7 +113,16 @@ module.exports = app => {
         var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest("hex");
 
         var data = {
-            ...vnp_Params,
+            "vnp_Amount": vnp_Params['vnp_Amount'],
+            "vnp_BankCode": vnp_Params['vnp_BankCode'],
+            "vnp_BankCode": vnp_Params['vnp_BankCode'],
+            "book_id": vnp_Params['vnp_OrderInfo'],
+            "vnp_PayDate": vnp_Params['vnp_PayDate'],
+            "vnp_ResponseCode": vnp_Params['vnp_ResponseCode'],
+            "vnp_TmnCode": vnp_Params['vnp_TmnCode'],
+            "vnp_TransactionNo": vnp_Params['vnp_TransactionNo'],
+            "vnp_TransactionStatus": vnp_Params['vnp_TransactionStatus'],
+            "vnp_TxnRef": vnp_Params['vnp_TxnRef'],
             "account_id": account_id
         }
         if (secureHash === signed) {
@@ -131,7 +139,10 @@ module.exports = app => {
             const db_2 = `SELECT * FROM receipt WHERE account_id = ${account_id}`
             sql.query(db_2, data, (err) => {
                 if (vnp_Params['vnp_ResponseCode'] == 0) {
-                    res.status(200).json({ data, Message: 'Payment success' })
+                    res.status(200).json({
+                        data, Message: 'Payment success',
+                        return_full_page: `http://localhost:3031/pdf/full/${vnp_Params['vnp_OrderInfo']}`
+                    })
                 } else if (vnp_Params['vnp_ResponseCode'] == 24) {
                     res.status(200).json({ Message: 'Payment cancel', data })
                 }

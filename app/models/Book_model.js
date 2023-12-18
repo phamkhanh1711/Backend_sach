@@ -8,13 +8,14 @@ const Book = (book) => {
     this.supplier_id = -book.supplier_id
     this.category_id = book.category_id
 }
-Book.getBook_fullPage = (result) => {
+Book.getBook_fullPage = (id, result) => {
     const db = `
     SELECT  book.book_id,book.book_title,book.price, i.file_path,i.image_path
     from book 
     LEFT JOIN book_img_file i
     ON book.book_id = i.book_id
     GROUP BY  book.book_id,book.book_title,book.price, i.file_path,i.image_path
+    HAVING book.book_id = ${id}
     `
     sql.query(db, (err, book) => {
         if (err) {

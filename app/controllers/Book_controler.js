@@ -5,7 +5,8 @@ const jwtDecode = require("jwt-decode");
 
 // hiển thị sách ra web
 exports.ShowBook_full = (req, res) => {
-    Book.getBook_fullPage((data) => {
+    const id = req.params.book_id
+    Book.getBook_fullPage(id, (data) => {
         const bookFilePath = `/public/upload/${data.map(item => item.file_path)}`;
         const imageFilePath = `/public/upload/${data.map(item => item.image_path)}`;
 
@@ -257,5 +258,11 @@ exports.ShowALLBook_5page = (req, res) => {
             imageFilePath = `/public/upload/${item => item.image_path}`;
         }))
         res.json({ data, bookFilePath_5page, imageFilePath })
+    })
+}
+
+exports.get_full_pdf = (req, res) => {
+    Book.findByID((data) => {
+
     })
 }
