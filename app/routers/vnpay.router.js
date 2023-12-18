@@ -2,12 +2,16 @@
 module.exports = app => {
     const router = require('express').Router();
     const sql = require('../models/db')
+    const model_book = require('../models/Book_model')
+    const jwtDecode = require("jwt-decode");
+    const middleware = require('../middleware/auth.middleware')
     // Ngân hàng	NCB
     // Số thẻ	9704198526191432198
     // Tên chủ thẻ	NGUYEN VAN A
     // Ngày phát hành	07/15
     // Mật khẩu OTP	123456
-    router.post('/create_payment_url', function (req, res, next) {
+
+    router.post('/create_payment_url/:id', middleware.authMember, function (req, res, next) {
         try {
             var ipAddr = '127.0.0.1'
 
@@ -22,40 +26,46 @@ module.exports = app => {
                 var date = new Date();
                 var createDate = dateFormat(date, 'yyyymmddHHMMss');
                 var orderId = dateFormat(date, 'HHmmss');
-                var amount = req.body.amount;
-                // var orderInfo = req.body.orderDescription;
-                // var orderType = req.body.orderType;
-                var orderInfo = "nannaaa";
-                var orderType = 'topo';
                 var locale = 'vn';
                 var currCode = 'VND';
                 var bankCode = 'NCB';
+                var book_id = req.params.id;
+                let orderInfo
+                let amount
+                model_book.findByID(book_id, (err, data) => {
+                    orderInfo = data[0].book_id
+                    amount = data[0].price
 
-                let vnp_Params = {};
-                vnp_Params['vnp_Version'] = '2.1.0';
-                vnp_Params['vnp_Command'] = 'pay';
-                vnp_Params['vnp_TmnCode'] = tmnCode;
-                vnp_Params['vnp_Locale'] = locale;
-                vnp_Params['vnp_CurrCode'] = currCode;
-                vnp_Params['vnp_TxnRef'] = orderId;
-                vnp_Params['vnp_OrderInfo'] = orderInfo;
-                vnp_Params['vnp_OrderType'] = orderType;
-                vnp_Params['vnp_Amount'] = amount * 100;
-                vnp_Params['vnp_ReturnUrl'] = returnUrl;
-                vnp_Params['vnp_IpAddr'] = ipAddr;
-                vnp_Params['vnp_CreateDate'] = createDate;
-                // vnp_Params['vnp_BankCode'] = bankCode
+                    // var amount = 10000;
+                    // var orderInfo = 'conan';
+                    // var orderType = 3;
 
-                vnp_Params = sortObject(vnp_Params);
+                    let vnp_Params = {};
+                    vnp_Params['vnp_Version'] = '2.1.0';
+                    vnp_Params['vnp_Command'] = 'pay';
+                    vnp_Params['vnp_TmnCode'] = tmnCode;
+                    vnp_Params['vnp_Locale'] = locale;
+                    vnp_Params['vnp_CurrCode'] = currCode;
+                    vnp_Params['vnp_TxnRef'] = orderId;
+                    vnp_Params['vnp_OrderInfo'] = orderInfo;
+                    vnp_Params['vnp_OrderType'] = book_id;
+                    vnp_Params['vnp_Amount'] = amount * 100;
+                    vnp_Params['vnp_ReturnUrl'] = returnUrl;
+                    vnp_Params['vnp_IpAddr'] = ipAddr;
+                    vnp_Params['vnp_CreateDate'] = createDate;
+                    //vnp_Params['vnp_BankCode'] = bankCode
 
-                var querystring = require('qs');
-                var signData = querystring.stringify(vnp_Params, { encode: false });
-                var crypto = require("crypto");
-                var hmac = crypto.createHmac("sha512", secretKey);
-                var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
-                vnp_Params['vnp_SecureHash'] = signed;
-                vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-                res.json({ vnpUrl })
+                    vnp_Params = sortObject(vnp_Params);
+
+                    var querystring = require('qs');
+                    var signData = querystring.stringify(vnp_Params, { encode: false });
+                    var crypto = require("crypto");
+                    var hmac = crypto.createHmac("sha512", secretKey);
+                    var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+                    vnp_Params['vnp_SecureHash'] = signed;
+                    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
+                    res.json({ vnpUrl })
+                })
             })
         } catch (error) {
             console.error('An error occurred:', error);
@@ -85,7 +95,9 @@ module.exports = app => {
         res.render('VN_Pay/form_info')
     })
 
-    app.get('/payment_success', (req, res) => {
+    app.get('/payment_success', middleware.authMember, (req, res) => {
+        const token = (req.get("Authorization")).split(" ")[1].trim();
+        const account_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
 
         var vnp_Params = req.query;
         var secureHash = vnp_Params['vnp_SecureHash'];
@@ -101,10 +113,13 @@ module.exports = app => {
         var hmac = crypto.createHmac("sha512", secretKey);
         var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest("hex");
 
+        var data = {
+            ...vnp_Params,
+            "account_id": account_id
+        }
         if (secureHash === signed) {
-
             const db = `INSERT INTO receipt SET ?`
-            sql.query(db, vnp_Params, (err) => {
+            sql.query(db, data, (err) => {
                 if (err) {
                     console.log('ERR:', err);
                 } else {
@@ -113,14 +128,14 @@ module.exports = app => {
             })
             //Kiem tra du lieu co hop le khong, cap nhat trang thai don hang va gui ket qua cho VNPAY theo dinh dang duoi
 
-            if (vnp_Params['vnp_ResponseCode'] == 00) {
-                res.status(200).json({ vnp_Params, Message: 'Payment success' })
-            } else if (vnp_Params['vnp_ResponseCode'] == 24) {
-                res.status(200).json({ Message: 'Payment cancel', vnp_Params })
-            } else {
-                res.status(200).json({ Message: 'Payment failed' })
-            }
-
+            const db_2 = `SELECT * FROM receipt WHERE account_id = ${account_id}`
+            sql.query(db_2, data, (err) => {
+                if (vnp_Params['vnp_ResponseCode'] == 0) {
+                    res.status(200).json({ data, Message: 'Payment success' })
+                } else if (vnp_Params['vnp_ResponseCode'] == 24) {
+                    res.status(200).json({ Message: 'Payment cancel', data })
+                }
+            })
         } else {
             res.status(200).json({ RspCode: '97', Message: 'Fail checksum' })
         }

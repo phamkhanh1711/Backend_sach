@@ -59,6 +59,8 @@ Book.getAllBook_infor = (result) => {
     })
 }
 //Lấy chi tiết từng sách 
+///cầ sửa
+
 Book.findByID = (id, result) => {
     const db = `
     SELECT * from book
@@ -68,16 +70,17 @@ Book.findByID = (id, result) => {
     ON book.supplier_id = book_supplier.supplier_id
     LEFT JOIN book_category 
     ON book.category_id = book_category.category_id
-    HAVING book.book_id = ${id}
+    WHERE book.book_id = ${id}
 `;
     sql.query(db, (err, book) => {
         if (err) {
             result(err, null)
         } else {
-            result(book)
+            result(null, book)
         }
     })
 }
+
 
 
 // tìm kiếm sách bằng tên
@@ -111,28 +114,37 @@ Book.Remove = (id, result) => {
     const deleteImgQuery = `DELETE FROM book_img_file WHERE book_id = ${id}`;
     const deleteBookQuery_5page = `DELETE FROM book_img_file_5page WHERE book_id = ${id}`;
     const deleteBookQuery = `DELETE FROM book WHERE book_id = ${id}`;
-
-    sql.query(deleteImgQuery, (err) => {
+    const deleteBooK_cart = `DELETE FROM cart WHERE book_id = ${id}`
+    sql.query(deleteBooK_cart, (err) => {
         if (err) {
             result(err, null);
             return;
+
         }
 
-        sql.query(deleteBookQuery_5page, (err) => {
+        sql.query(deleteImgQuery, (err) => {
             if (err) {
                 result(err, null);
                 return;
             }
 
-            sql.query(deleteBookQuery, (err) => {
+            sql.query(deleteBookQuery_5page, (err) => {
                 if (err) {
                     result(err, null);
                     return;
                 }
-                result("xóa dữ liệu sách có id: " + id + " Thành công!");
+
+                sql.query(deleteBookQuery, (err) => {
+                    if (err) {
+                        result(err, null);
+                        return;
+                    }
+
+                    result(null, "xóa dữ liệu sách có id: " + id + " Thành công!");
+                });
             });
         });
-    });
+    })
 };
 
 // //Sửa thông tin sách 

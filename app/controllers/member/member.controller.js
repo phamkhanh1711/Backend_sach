@@ -72,13 +72,12 @@ exports.delete_infor_User = (req, res) => {
     })
 }
 
-//giỏ hàng
+//===========================================GIỎ HÀNG==========================================//
 exports.Add_Cart = (req, res, next) => {
     const token = (req.get("Authorization")).split(" ")[1].trim();
     const account_id = jwtDecode.jwtDecode(token, { header: false }).account_id;
     let book_id = req.params.book_id
-    book.findByID(book_id, (data) => {
-        let price
+    book.findByID(book_id, (err, data) => {
         const newData = {
             account_id,
             book_id: book_id,

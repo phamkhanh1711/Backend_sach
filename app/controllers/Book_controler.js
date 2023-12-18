@@ -16,7 +16,7 @@ exports.ShowBook_full = (req, res) => {
 // show sách theo id
 exports.detailBooK = (req, res, err) => {
     var id = req.params.id;
-    Book.findByID(id, (data) => {
+    Book.findByID(id, (err, data) => {
         if (!data) {
             res.status(404).json({ error: 'Book not found' });
         } else {
@@ -94,7 +94,7 @@ exports.createNewBook = async (req, res) => {
                 cutfile_PDF(book_id)
 
                 Book.get_image_fileDB(book_id, (dataUpload) => {
-                    const bookFilePath_5page = `/public/upload/${dataUpload_5page.map(item => item.file_path)}`;
+                    const bookFilePath_5page = `/public/upload/${dataUpload.map(item => item.file_path)}`;
                     //  const bookFilePath = `/public/upload/${dataUpload.map(item => item.file_path)}`;
                     const imageFilePath = `/public/upload/${dataUpload.map(item => item.image_path)}`;
                     res.json({
@@ -155,13 +155,13 @@ exports.createNewBook = async (req, res) => {
 
 exports.removeBook = (req, res) => {
     var id = req.params.id;
-    Book.Remove(id, (err) => {
+    Book.Remove(id, (err, message) => {
         if (err) {
             res.json("Error : " + err)
         } else {
-            res.status(200).json({
-                message: 'Book deleted successfully'
-            });
+            res.status(200).json(
+                message
+            );
         }
     })
 }

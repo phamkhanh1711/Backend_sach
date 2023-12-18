@@ -60,7 +60,13 @@ Member.insertCart = (data, callback) => {
 }
 
 Member.getInfo_CartByUser = (id, callback) => {
-    const db = `SELECT * FROM cart WHERE account_id = ${id}`
+    const db = `SELECT c.cart_id,u.fullName,u.phone_number,b.book_title,c.price,c.created_at
+    FROM cart c
+    LEFT JOIN book b ON c.book_id = b.book_id
+    LEFT JOIN account a ON a.account_id = c.account_id
+    LEFT JOIN user_info u ON u.account_id = a.account_id
+    WHERE c.account_id = ${id}
+    GROUP BY c.cart_id,u.fullName,b.book_title,c.price,c.created_at`
     sql.query(db, (err, data) => {
         if (err) {
             console.log("error db:", err);
